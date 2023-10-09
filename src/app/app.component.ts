@@ -36,15 +36,14 @@ export class AppComponent implements OnInit {
       .then((text) => {
         this.imageUrl = new DOMParser()
           .parseFromString(text, "text/html")
-          .querySelectorAll("img#image")[0]
-          .getAttribute("src");
+          .querySelectorAll("img#image")[0];
 
-        if (typeof this.imageUrl === null) {
+        if (typeof this.imageUrl.getAttribute("src") === null) {
           window.location.reload();
         }
 
         this.image = this.sanitizer.bypassSecurityTrustHtml(
-          `<img id="image" src="${this.imageUrl}">`
+          `<img id="image" src="${this.imageUrl.getAttribute("src")}">`
         );
 
         setTimeout(() => {
