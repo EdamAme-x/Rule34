@@ -43,7 +43,7 @@ export class AppComponent implements OnInit {
         }
 
         this.image = this.sanitizer.bypassSecurityTrustHtml(
-          `<img id="image" src="${this.imageUrl.getAttribute("src")}">`
+          `<img id="image" src="${this.imageUrl.getAttribute("src").replace("//samples", "/samples")}">`
         );
 
         setTimeout(() => {
