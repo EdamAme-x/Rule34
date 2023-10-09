@@ -13,7 +13,7 @@ import { randomInt } from "./utils/randomInt";
 })
 export class AppComponent implements OnInit {
   title = "rule34";
-  imageUrl: string | null | Element | unknown = "";
+  imageUrl: Element = "";
   id = "";
   image: SafeHtml = "";
   reloadInterval: number = 5000;
