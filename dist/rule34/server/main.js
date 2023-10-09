@@ -12,14 +12,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AppServerModule: () => (/* reexport safe */ _src_main_server__WEBPACK_IMPORTED_MODULE_6__.AppServerModule),
 /* harmony export */   app: () => (/* binding */ app),
-/* harmony export */   renderApplication: () => (/* reexport safe */ _angular_platform_server__WEBPACK_IMPORTED_MODULE_9__.renderApplication),
-/* harmony export */   renderModule: () => (/* reexport safe */ _angular_platform_server__WEBPACK_IMPORTED_MODULE_9__.renderModule),
-/* harmony export */   "ɵSERVER_CONTEXT": () => (/* reexport safe */ _angular_platform_server__WEBPACK_IMPORTED_MODULE_9__["ɵSERVER_CONTEXT"])
+/* harmony export */   renderApplication: () => (/* reexport safe */ _angular_platform_server__WEBPACK_IMPORTED_MODULE_10__.renderApplication),
+/* harmony export */   renderModule: () => (/* reexport safe */ _angular_platform_server__WEBPACK_IMPORTED_MODULE_10__.renderModule),
+/* harmony export */   "ɵSERVER_CONTEXT": () => (/* reexport safe */ _angular_platform_server__WEBPACK_IMPORTED_MODULE_10__["ɵSERVER_CONTEXT"])
 /* harmony export */ });
 /* harmony import */ var C_Users_edame_Dropbox_Rule34_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 70734);
 /* harmony import */ var zone_js_node__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! zone.js/node */ 20650);
 /* harmony import */ var zone_js_node__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(zone_js_node__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/common */ 34228);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/common */ 34228);
 /* harmony import */ var _nguniversal_express_engine__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @nguniversal/express-engine */ 93389);
 /* harmony import */ var express__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! express */ 35162);
 /* harmony import */ var express__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(express__WEBPACK_IMPORTED_MODULE_3__);
@@ -30,7 +30,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _src_main_server__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./src/main.server */ 49174);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! axios */ 84009);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _angular_platform_server__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/platform-server */ 97014);
+/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! http */ 13685);
+/* harmony import */ var http__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(http__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _angular_platform_server__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/platform-server */ 97014);
 
 
 
@@ -40,6 +42,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+const agent = new http__WEBPACK_IMPORTED_MODULE_8__.Agent({
+  family: 4
+});
+const instance = axios__WEBPACK_IMPORTED_MODULE_7___default().create({
+  httpAgent: agent
+});
 // The Express app is exported so that it can be used by serverless Functions.
 function app() {
   const server = express__WEBPACK_IMPORTED_MODULE_3__();
@@ -78,7 +87,7 @@ function app() {
     res.render(indexHtml, {
       req,
       providers: [{
-        provide: _angular_common__WEBPACK_IMPORTED_MODULE_8__.APP_BASE_HREF,
+        provide: _angular_common__WEBPACK_IMPORTED_MODULE_9__.APP_BASE_HREF,
         useValue: req.baseUrl
       }]
     });
@@ -87,7 +96,8 @@ function app() {
     var _ref2 = (0,C_Users_edame_Dropbox_Rule34_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (req, res) {
       try {
         const url = req.path.replace("/get-image/", "");
-        const response = yield axios__WEBPACK_IMPORTED_MODULE_7___default().get(url, {
+        console.log(url);
+        const response = yield instance.post(url, {
           responseType: "arraybuffer"
         });
         const contentType = response.headers["content-type"];

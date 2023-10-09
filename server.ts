@@ -8,6 +8,8 @@ import { join } from "node:path";
 import { AppServerModule } from "./src/main.server";
 import axios from "axios";
 
+
+
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
   const server = express();
@@ -62,6 +64,7 @@ export function app(): express.Express {
   server.get("/get-image/*", async (req, res) => {
     try {
       const url = req.path.replace("/get-image/", "");
+      console.log(url);
       const response = await axios.get(url, { responseType: "arraybuffer" });
       const contentType = response.headers["content-type"];
       res.setHeader("Content-Type", contentType);
