@@ -28,7 +28,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var node_path__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! node:path */ 49411);
 /* harmony import */ var node_path__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(node_path__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _src_main_server__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./src/main.server */ 49174);
-/* harmony import */ var node_fetch__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! node-fetch */ 1414);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! axios */ 84009);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var _angular_platform_server__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/platform-server */ 97014);
 
 
@@ -64,7 +65,7 @@ function app() {
     var _ref = (0,C_Users_edame_Dropbox_Rule34_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (req, res) {
       const id = req.params.id;
       const url = `https://rule34.xxx/index.php?page=post&s=view&id=${id}`;
-      const resp = yield (0,node_fetch__WEBPACK_IMPORTED_MODULE_7__["default"])(url);
+      const resp = yield fetch(url);
       const data = yield resp.text();
       res.send(data);
     });
@@ -86,15 +87,14 @@ function app() {
     var _ref2 = (0,C_Users_edame_Dropbox_Rule34_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (req, res) {
       try {
         const url = req.path.replace("/get-image/", "");
-        const response = yield (0,node_fetch__WEBPACK_IMPORTED_MODULE_7__["default"])(url, {
-          method: "GET"
+        const response = yield axios__WEBPACK_IMPORTED_MODULE_7___default().get(url, {
+          responseType: "arraybuffer"
         });
-        const contentType = response.headers.get("content-type") || "";
+        const contentType = response.headers["content-type"];
         res.setHeader("Content-Type", contentType);
-        const buffer = yield response.buffer();
-        res.send(buffer);
+        res.send(response.data);
       } catch (error) {
-        console.error(error);
+        console.error(error.substring(0, 100));
         res.status(500).send("画像を取得できませんでした。");
       }
     });
@@ -364,6 +364,17 @@ module.exports = webpackEmptyContext;
 
 /***/ }),
 
+/***/ 39491:
+/*!*************************!*\
+  !*** external "assert" ***!
+  \*************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("assert");
+
+/***/ }),
+
 /***/ 50852:
 /*!******************************!*\
   !*** external "async_hooks" ***!
@@ -452,17 +463,6 @@ module.exports = require("net");
 
 /***/ }),
 
-/***/ 2254:
-/*!******************************!*\
-  !*** external "node:buffer" ***!
-  \******************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("node:buffer");
-
-/***/ }),
-
 /***/ 87561:
 /*!**************************!*\
   !*** external "node:fs" ***!
@@ -474,39 +474,6 @@ module.exports = require("node:fs");
 
 /***/ }),
 
-/***/ 8849:
-/*!****************************!*\
-  !*** external "node:http" ***!
-  \****************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("node:http");
-
-/***/ }),
-
-/***/ 2286:
-/*!*****************************!*\
-  !*** external "node:https" ***!
-  \*****************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("node:https");
-
-/***/ }),
-
-/***/ 7503:
-/*!***************************!*\
-  !*** external "node:net" ***!
-  \***************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("node:net");
-
-/***/ }),
-
 /***/ 49411:
 /*!****************************!*\
   !*** external "node:path" ***!
@@ -515,72 +482,6 @@ module.exports = require("node:net");
 
 "use strict";
 module.exports = require("node:path");
-
-/***/ }),
-
-/***/ 7742:
-/*!*******************************!*\
-  !*** external "node:process" ***!
-  \*******************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("node:process");
-
-/***/ }),
-
-/***/ 4492:
-/*!******************************!*\
-  !*** external "node:stream" ***!
-  \******************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("node:stream");
-
-/***/ }),
-
-/***/ 2477:
-/*!**********************************!*\
-  !*** external "node:stream/web" ***!
-  \**********************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("node:stream/web");
-
-/***/ }),
-
-/***/ 1041:
-/*!***************************!*\
-  !*** external "node:url" ***!
-  \***************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("node:url");
-
-/***/ }),
-
-/***/ 7261:
-/*!****************************!*\
-  !*** external "node:util" ***!
-  \****************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("node:util");
-
-/***/ }),
-
-/***/ 5628:
-/*!****************************!*\
-  !*** external "node:zlib" ***!
-  \****************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("node:zlib");
 
 /***/ }),
 
@@ -680,17 +581,6 @@ module.exports = require("url");
 
 "use strict";
 module.exports = require("util");
-
-/***/ }),
-
-/***/ 1267:
-/*!*********************************!*\
-  !*** external "worker_threads" ***!
-  \*********************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("worker_threads");
 
 /***/ }),
 
