@@ -13,7 +13,7 @@ import { randomInt } from "./utils/randomInt";
 })
 export class AppComponent implements OnInit {
   title = "rule34";
-  imageUrl: string | null = "";
+  imageUrl: string | null | Element | unknown = "";
   id = "";
   image: SafeHtml = "";
   reloadInterval: number = 5000;
@@ -43,7 +43,9 @@ export class AppComponent implements OnInit {
         }
 
         this.image = this.sanitizer.bypassSecurityTrustHtml(
-          `<img id="image" src="${this.imageUrl.getAttribute("src").replace("//samples", "/samples")}">`
+          `<img id="image" src="${this.imageUrl
+            .getAttribute("src")
+            .replace("//samples", "/samples")}">`
         );
 
         setTimeout(() => {
