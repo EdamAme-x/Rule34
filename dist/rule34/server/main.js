@@ -94,7 +94,7 @@ function app() {
         const buffer = yield response.buffer();
         res.send(buffer);
       } catch (error) {
-        console.error(error.substring(0, 100));
+        console.error(error);
         res.status(500).send("画像を取得できませんでした。");
       }
     });

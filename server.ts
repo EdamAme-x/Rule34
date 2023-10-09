@@ -67,7 +67,7 @@ export function app(): express.Express {
       const buffer = await response.buffer();
       res.send(buffer);
     } catch (error: any) {
-      console.error(error.substring(0, 100));
+      console.error(error);
       res.status(500).send("画像を取得できませんでした。");
     }
   });
