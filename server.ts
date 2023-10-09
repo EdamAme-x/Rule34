@@ -49,12 +49,13 @@ export function app(): express.Express {
     }
   });
 
-  server.get("/", async (req, res) => {
+  server.get("/", (req, res) => {
     res.render(indexHtml, {
       req,
       providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }],
     });
   });
+
 
   server.get("/get-image/*", async (req, res) => {
     try {
