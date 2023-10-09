@@ -33,7 +33,7 @@ export class AppComponent implements OnInit {
 
     fetch("/image/" + this.id)
       .then((res) => res.text())
-      .then((text) => {
+      .then(async (text) => {
         try {
           const dom = new DOMParser()
             .parseFromString(text, "text/html")
@@ -44,9 +44,19 @@ export class AppComponent implements OnInit {
           this.imageUrl = dom;
         } catch (_e) {}
 
-        if (typeof this.imageUrl === null) {
+        try {
+          this.imageUrl.getAttribute("src");
+        } catch (_e) {
           window.location.reload();
         }
+
+        const resp = await fetch(
+          "/get-image/" + this.imageUrl.getAttribute("src")
+        );
+
+        const imageBlob = await resp.blob(); // .blob()
+        const imageURL = URL.createObjectURL(imageBlob);
+        console.log(imageURL);
 
         try {
           this.image = this.sanitizer.bypassSecurityTrustHtml(
@@ -54,10 +64,11 @@ export class AppComponent implements OnInit {
             <a href="${this.imageUrl.getAttribute("src")}" target="_blank">
             ${
               this.imageUrl.outerHTML
-                ? this.imageUrl.getAttribute("src").split("//")[2]
+                ? this.imageUrl.getAttribute("src").split("//")[2] // path
                 : ""
             }
-            </a>`
+            </a>
+            <img id="image" src="${imageURL}">`
           );
         } catch (_e) {
           window.location.reload();
