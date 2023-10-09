@@ -1,5 +1,9 @@
 import { Component, OnInit } from "@angular/core";
-import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
+import {
+  DomSanitizer,
+  SafeHtml,
+  SafeResourceUrl,
+} from "@angular/platform-browser";
 import { randomInt } from "./utils/randomInt";
 
 @Component({
@@ -9,15 +13,44 @@ import { randomInt } from "./utils/randomInt";
 })
 export class AppComponent implements OnInit {
   title = "rule34";
-  imageBaseUrl = "https://rule34.xxx/index.php?page=post&s=view&id=";
-  imageUrl = "";
-  trustUrl: SafeResourceUrl = "";
+  imageUrl: string | null = "";
+  id = "";
+  image: SafeHtml = "";
+  reloadInterval: number = 5000;
+
+  changeIntervel(event: Event) {
+    this.reloadInterval = parseInt((event.target as HTMLInputElement).value);
+    localStorage.setItem("reloadInterval", this.reloadInterval.toString());
+  }
 
   ngOnInit() {
-    this.imageUrl = this.imageBaseUrl + randomInt(1, 8000000);
+    this.id = randomInt(1, 8000000).toString();
+    if (typeof window == "undefined") return;
 
-    this.trustUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.imageUrl);
-    console.log(this.trustUrl);
+    if (!localStorage.getItem("reloadInterval")) {
+      localStorage.setItem("reloadInterval", "5000");
+    }
+
+    fetch("/image/" + this.id)
+      .then((res) => res.text())
+      .then((text) => {
+        this.imageUrl = new DOMParser()
+          .parseFromString(text, "text/html")
+          .querySelectorAll("img#image")[0]
+          .getAttribute("src");
+
+        if (typeof this.imageUrl === null) {
+          window.location.reload();
+        }
+
+        this.image = this.sanitizer.bypassSecurityTrustHtml(
+          `<img id="image" src="${this.imageUrl}">`
+        );
+
+        setTimeout(() => {
+          this.ngOnInit();
+        }, this.reloadInterval);
+      });
   }
 
   constructor(private sanitizer: DomSanitizer) {}
