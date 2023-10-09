@@ -94,7 +94,7 @@ function app() {
         res.setHeader("Content-Type", contentType);
         res.send(response.data);
       } catch (error) {
-        console.error(error.substring(0, 100));
+        console.error(error);
         res.status(500).send("画像を取得できませんでした。");
       }
     });

@@ -67,7 +67,7 @@ export function app(): express.Express {
       res.setHeader("Content-Type", contentType);
       res.send(response.data);
     } catch (error: any) {
-      console.error(error.substring(0, 100));
+      console.error(error);
       res.status(500).send("画像を取得できませんでした。");
     }
   });
