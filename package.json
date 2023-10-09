@@ -10,7 +10,8 @@
     "dev:ssr": "ng run rule34:serve-ssr",
     "serve:ssr": "node dist/rule34/server/main.js",
     "build:ssr": "ng build && ng run rule34:server",
-    "prerender": "ng run rule34:prerender"
+    "prerender": "ng run rule34:prerender",
+    "vercel-build": "npm run build:ssr"
   },
   "private": true,
   "dependencies": {
