@@ -68,7 +68,7 @@ export function app(): express.Express {
       res.send(response.data);
     } catch (error: any) {
       console.error(error);
-      res.status(500).send("画像を取得できませんでした。");
+      res.status(500).send(error);
     }
   });
   return server;

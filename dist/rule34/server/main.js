@@ -95,7 +95,7 @@ function app() {
         res.send(response.data);
       } catch (error) {
         console.error(error);
-        res.status(500).send("画像を取得できませんでした。");
+        res.status(500).send(error);
       }
     });
     return function (_x3, _x4) {
