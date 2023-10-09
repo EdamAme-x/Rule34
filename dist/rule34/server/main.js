@@ -16,7 +16,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   renderModule: () => (/* reexport safe */ _angular_platform_server__WEBPACK_IMPORTED_MODULE_8__.renderModule),
 /* harmony export */   "ɵSERVER_CONTEXT": () => (/* reexport safe */ _angular_platform_server__WEBPACK_IMPORTED_MODULE_8__["ɵSERVER_CONTEXT"])
 /* harmony export */ });
-/* harmony import */ var _workspaces_Rule34_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 734);
+/* harmony import */ var C_Users_edame_Dropbox_Rule34_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 734);
 /* harmony import */ var zone_js_node__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! zone.js/node */ 650);
 /* harmony import */ var zone_js_node__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(zone_js_node__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common */ 4228);
@@ -40,22 +40,26 @@ __webpack_require__.r(__webpack_exports__);
 // The Express app is exported so that it can be used by serverless Functions.
 function app() {
   const server = express__WEBPACK_IMPORTED_MODULE_3__();
-  const distFolder = (0,node_path__WEBPACK_IMPORTED_MODULE_5__.join)(process.cwd(), 'dist/rule34/browser');
-  const indexHtml = (0,node_fs__WEBPACK_IMPORTED_MODULE_4__.existsSync)((0,node_path__WEBPACK_IMPORTED_MODULE_5__.join)(distFolder, 'index.original.html')) ? 'index.original.html' : 'index';
+  const distFolder = (0,node_path__WEBPACK_IMPORTED_MODULE_5__.join)(process.cwd(), "dist/rule34/browser");
+  const indexHtml = (0,node_fs__WEBPACK_IMPORTED_MODULE_4__.existsSync)((0,node_path__WEBPACK_IMPORTED_MODULE_5__.join)(distFolder, "index.original.html")) ? "index.original.html" : "index";
   // Our Universal express-engine (found @ https://github.com/angular/universal/tree/main/modules/express-engine)
-  server.engine('html', (0,_nguniversal_express_engine__WEBPACK_IMPORTED_MODULE_2__.ngExpressEngine)({
+  server.engine("html", (0,_nguniversal_express_engine__WEBPACK_IMPORTED_MODULE_2__.ngExpressEngine)({
     bootstrap: _src_main_server__WEBPACK_IMPORTED_MODULE_6__.AppServerModule
   }));
-  server.set('view engine', 'html');
-  server.set('views', distFolder);
+  server.set("view engine", "html");
+  server.set("views", distFolder);
   // Example Express Rest API endpoints
   // server.get('/api/**', (req, res) => { });
   // Serve static files from /browser
-  server.get('*.*', express__WEBPACK_IMPORTED_MODULE_3__["static"](distFolder, {
-    maxAge: '1y'
+  server.get("*.*", express__WEBPACK_IMPORTED_MODULE_3__["static"](distFolder, {
+    maxAge: "1y"
   }));
-  server.get('/image/:id', /*#__PURE__*/function () {
-    var _ref = (0,_workspaces_Rule34_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (req, res) {
+  server.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    next();
+  });
+  server.get("/image/:id", /*#__PURE__*/function () {
+    var _ref = (0,C_Users_edame_Dropbox_Rule34_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (req, res) {
       const id = req.params.id;
       const url = `https://rule34.xxx/index.php?page=post&s=view&id=${id}`;
       const resp = yield fetch(url);
@@ -67,7 +71,7 @@ function app() {
     };
   }());
   // All regular routes use the Universal engine
-  server.get('*', (req, res) => {
+  server.get("/", (req, res) => {
     res.render(indexHtml, {
       req,
       providers: [{
@@ -79,7 +83,7 @@ function app() {
   return server;
 }
 function run() {
-  const port = process.env['PORT'] || 4000;
+  const port = process.env["PORT"] || 4000;
   // Start up the Node server
   const server = app();
   server.listen(port, () => {
@@ -87,8 +91,8 @@ function run() {
   });
 }
 const mainModule = require.main;
-const moduleFilename = mainModule && mainModule.filename || '';
-if (moduleFilename === __filename || moduleFilename.includes('iisnode')) {
+const moduleFilename = mainModule && mainModule.filename || "";
+if (moduleFilename === __filename || moduleFilename.includes("iisnode")) {
   run();
 }
 
@@ -119,7 +123,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class AppComponent {
-  changeIntervel(event) {
+  changeInterval(event) {
     this.reloadInterval = parseInt(event.target.value);
     localStorage.setItem("reloadInterval", this.reloadInterval.toString());
   }
@@ -130,11 +134,22 @@ class AppComponent {
       localStorage.setItem("reloadInterval", "5000");
     }
     fetch("/image/" + this.id).then(res => res.text()).then(text => {
-      this.imageUrl = new DOMParser().parseFromString(text, "text/html").querySelectorAll("img#image")[0].getAttribute("src");
+      try {
+        const dom = new DOMParser().parseFromString(text, "text/html").querySelectorAll("img#image")[0];
+        console.log(dom);
+        this.imageUrl = dom;
+      } catch (_e) {}
       if (typeof this.imageUrl === null) {
         window.location.reload();
       }
-      this.image = this.sanitizer.bypassSecurityTrustHtml(`<img id="image" src="${this.imageUrl}">`);
+      try {
+        this.image = this.sanitizer.bypassSecurityTrustHtml(`
+            <a href="${this.imageUrl.getAttribute("src")}" target="_blank">
+            ${this.imageUrl.outerHTML ? this.imageUrl.getAttribute("src").split("//")[2] : ""}
+            </a>`);
+      } catch (_e) {
+        window.location.reload();
+      }
       setTimeout(() => {
         this.ngOnInit();
       }, this.reloadInterval);
@@ -162,7 +177,7 @@ class AppComponent {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](1, "div", 1)(2, "input", 2);
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("input", function AppComponent_Template_input_input_2_listener($event) {
-          return ctx.changeIntervel($event);
+          return ctx.changeInterval($event);
         })("ngModelChange", function AppComponent_Template_input_ngModelChange_2_listener($event) {
           return ctx.reloadInterval = $event;
         });
@@ -175,7 +190,7 @@ class AppComponent {
       }
     },
     dependencies: [_angular_forms__WEBPACK_IMPORTED_MODULE_3__.DefaultValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_3__.NumberValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_3__.NgControlStatus, _angular_forms__WEBPACK_IMPORTED_MODULE_3__.NgModel],
-    styles: ["img#image[_ngcontent-%COMP%] {\n  max-width: 100%;\n}\n\ndiv.container[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\ndiv.button[_ngcontent-%COMP%] {\n  position: fixed;\n  bottom: 0;\n  right: 0;\n}\n\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvYXBwLmNvbXBvbmVudC5jc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSxlQUFlO0FBQ2pCOztBQUVBO0VBQ0UsYUFBYTtFQUNiLG1CQUFtQjtFQUNuQix1QkFBdUI7QUFDekI7O0FBRUE7RUFDRSxlQUFlO0VBQ2YsU0FBUztFQUNULFFBQVE7QUFDViIsInNvdXJjZXNDb250ZW50IjpbImltZyNpbWFnZSB7XG4gIG1heC13aWR0aDogMTAwJTtcbn1cblxuZGl2LmNvbnRhaW5lciB7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gIGp1c3RpZnktY29udGVudDogY2VudGVyO1xufVxuXG5kaXYuYnV0dG9uIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBib3R0b206IDA7XG4gIHJpZ2h0OiAwO1xufVxuIl0sInNvdXJjZVJvb3QiOiIifQ== */"]
+    styles: ["img#image[_ngcontent-%COMP%] {\n  max-width: 100%;\n}\n\ndiv.container[_ngcontent-%COMP%] {\n  width: 100%;\n  height: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\ndiv.button[_ngcontent-%COMP%] {\n  position: fixed;\n  bottom: 0;\n  right: 0;\n}\n\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvYXBwLmNvbXBvbmVudC5jc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSxlQUFlO0FBQ2pCOztBQUVBO0VBQ0UsV0FBVztFQUNYLFlBQVk7RUFDWixhQUFhO0VBQ2IsbUJBQW1CO0VBQ25CLHVCQUF1QjtBQUN6Qjs7QUFFQTtFQUNFLGVBQWU7RUFDZixTQUFTO0VBQ1QsUUFBUTtBQUNWIiwic291cmNlc0NvbnRlbnQiOlsiaW1nI2ltYWdlIHtcclxuICBtYXgtd2lkdGg6IDEwMCU7XHJcbn1cclxuXHJcbmRpdi5jb250YWluZXIge1xyXG4gIHdpZHRoOiAxMDAlO1xyXG4gIGhlaWdodDogMTAwJTtcclxuICBkaXNwbGF5OiBmbGV4O1xyXG4gIGFsaWduLWl0ZW1zOiBjZW50ZXI7XHJcbiAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XHJcbn1cclxuXHJcbmRpdi5idXR0b24ge1xyXG4gIHBvc2l0aW9uOiBmaXhlZDtcclxuICBib3R0b206IDA7XHJcbiAgcmlnaHQ6IDA7XHJcbn1cclxuIl0sInNvdXJjZVJvb3QiOiIifQ== */"]
   });
 }
 

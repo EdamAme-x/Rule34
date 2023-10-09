@@ -13,12 +13,12 @@ import { randomInt } from "./utils/randomInt";
 })
 export class AppComponent implements OnInit {
   title = "rule34";
-  imageUrl: any = "";
+  imageUrl: Element | any = "";
   id = "";
   image: SafeHtml = "";
   reloadInterval: number = 5000;
 
-  changeIntervel(event: Event) {
+  changeInterval(event: Event) {
     this.reloadInterval = parseInt((event.target as HTMLInputElement).value);
     localStorage.setItem("reloadInterval", this.reloadInterval.toString());
   }
@@ -34,19 +34,34 @@ export class AppComponent implements OnInit {
     fetch("/image/" + this.id)
       .then((res) => res.text())
       .then((text) => {
-        this.imageUrl = new DOMParser()
-          .parseFromString(text, "text/html")
-          .querySelectorAll("img#image")[0];
+        try {
+          const dom = new DOMParser()
+            .parseFromString(text, "text/html")
+            .querySelectorAll("img#image")[0];
 
-        if (typeof this.imageUrl.getAttribute("src") === null) {
+          console.log(dom);
+
+          this.imageUrl = dom;
+        } catch (_e) {}
+
+        if (typeof this.imageUrl === null) {
           window.location.reload();
         }
 
-        this.image = this.sanitizer.bypassSecurityTrustHtml(
-          `<img id="image" src="${this.imageUrl
-            .getAttribute("src")
-            .replace("//samples", "/samples")}">`
-        );
+        try {
+          this.image = this.sanitizer.bypassSecurityTrustHtml(
+            `
+            <a href="${this.imageUrl.getAttribute("src")}" target="_blank">
+            ${
+              this.imageUrl.outerHTML
+                ? this.imageUrl.getAttribute("src").split("//")[2]
+                : ""
+            }
+            </a>`
+          );
+        } catch (_e) {
+          window.location.reload();
+        }
 
         setTimeout(() => {
           this.ngOnInit();
